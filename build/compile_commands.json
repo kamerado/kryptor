@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/meganuts/projects/rsa-test/build",
+  "command": "/usr/bin/c++   -std=gnu++17 -o CMakeFiles/rsa-test.dir/main.cpp.o -c /home/meganuts/projects/rsa-test/main.cpp",
+  "file": "/home/meganuts/projects/rsa-test/main.cpp",
+  "output": "CMakeFiles/rsa-test.dir/main.cpp.o"
+},
+{
+  "directory": "/home/meganuts/projects/rsa-test/build",
+  "command": "/usr/bin/c++   -std=gnu++17 -o CMakeFiles/rsa-test.dir/src/rsa.cpp.o -c /home/meganuts/projects/rsa-test/src/rsa.cpp",
+  "file": "/home/meganuts/projects/rsa-test/src/rsa.cpp",
+  "output": "CMakeFiles/rsa-test.dir/src/rsa.cpp.o"
+}
+]
