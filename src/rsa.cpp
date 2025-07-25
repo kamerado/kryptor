@@ -8,43 +8,45 @@
 
 namespace rsa {
 
-gmp_randclass &global_rng() {
-  static gmp_randclass rng(gmp_randinit_default);
-  static bool seeded = false;
-  if (!seeded) {
-    std::random_device rd;
-    // Combine several 32-bit draws into a 64-bit seed
-    unsigned long seed = ((unsigned long)rd() << 32) ^ rd();
-    rng.seed(seed);
-    seeded = true;
+namespace {
+  gmp_randclass &global_rng() {
+    static gmp_randclass rng(gmp_randinit_default);
+    static bool seeded = false;
+    if (!seeded) {
+      std::random_device rd;
+      // Combine several 32-bit draws into a 64-bit seed
+      unsigned long seed = ((unsigned long)rd() << 32) ^ rd();
+      rng.seed(seed);
+      seeded = true;
+    }
+    return rng;
   }
-  return rng;
-}
 
-mpz_class random_kbit_odd(size_t k) {
-  gmp_randclass &rng = global_rng();
-  mpz_class x = rng.get_z_bits(k);  // uniform k-bit integer
-  mpz_setbit(x.get_mpz_t(), 0);     // ensure odd
-  mpz_setbit(x.get_mpz_t(), k - 1); // ensure top bit set -> k bits
-  return x;
-}
+  mpz_class random_kbit_odd(size_t k) {
+    gmp_randclass &rng = global_rng();
+    mpz_class x = rng.get_z_bits(k);  // uniform k-bit integer
+    mpz_setbit(x.get_mpz_t(), 0);     // ensure odd
+    mpz_setbit(x.get_mpz_t(), k - 1); // ensure top bit set -> k bits
+    return x;
+  }
 
-mpz_class random_prime(size_t k) {
-  mpz_class cand = random_kbit_odd(k);
-  // Quick small-factor trial: divide by small primes if you like (optional).
-  // Let GMP walk to the next probable prime:
-  mpz_nextprime(cand.get_mpz_t(), cand.get_mpz_t());
-  return cand;
-}
-
-mpz_class gen_probable_prime(size_t k, int reps) {
-  gmp_randclass &rng = global_rng();
-  while (true) {
+  mpz_class random_prime(size_t k) {
     mpz_class cand = random_kbit_odd(k);
-    // Miller-Rabin reps internal to GMP prob test
-    int result = mpz_probab_prime_p(cand.get_mpz_t(), reps);
-    if (result > 0) { // 1 = probably, 2 = definitely (for small)
-      return cand;
+    // Quick small-factor trial: divide by small primes if you like (optional).
+    // Let GMP walk to the next probable prime:
+    mpz_nextprime(cand.get_mpz_t(), cand.get_mpz_t());
+    return cand;
+  }
+
+  mpz_class gen_probable_prime(size_t k, int reps = 40) {
+    gmp_randclass &rng = global_rng();
+    while (true) {
+      mpz_class cand = random_kbit_odd(k);
+      // Miller-Rabin reps internal to GMP prob test
+      int result = mpz_probab_prime_p(cand.get_mpz_t(), reps);
+      if (result > 0) { // 1 = probably, 2 = definitely (for small)
+        return cand;
+      }
     }
   }
 }
