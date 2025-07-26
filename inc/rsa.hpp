@@ -17,9 +17,12 @@ rsaKey generate_rsa(size_t bits = 2048, const mpz_class &e = 65537);
 
 mpz_class string_to_mpz(std::string &s);
 std::string mpz_to_string(mpz_class m);
-mpz_class rsa_encrypt(const rsaKey &key, const mpz_class &m);
+void rsa_encrypt(const rsaKey &key, const std::string &message, mpz_class &c);
 mpz_class rsa_decrypt(const rsaKey &k, const mpz_class &c);
+void printFileBin(const std::string &path);
 
-void rsa_encrypt_file(const rsaKey &key, const std::ifstream &m);
-void rsa_decrypt_file(const rsaKey &k, const std::ofstream &c);
+void rsa_encrypt_file(const rsaKey &key, const std::string &inPath,
+                      const std::string &outPath);
+void rsa_decrypt_file(const rsaKey &k, const std::string &inPath,
+                      const std::string &outPath);
 } // namespace rsa
